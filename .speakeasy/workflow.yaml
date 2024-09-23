@@ -4,9 +4,14 @@ sources:
     petstore-oas:
         inputs:
             - location: openapi.yaml
+        overlays:
+            - location: .speakeasy/speakeasy-modifications-overlay.yaml
         registry:
             location: registry.speakeasyapi.dev/coffeecup/coffeecup/petstore-oas
 targets:
     petstore:
         target: typescript
         source: petstore-oas
+        publish:
+            npm:
+                token: $npm_token

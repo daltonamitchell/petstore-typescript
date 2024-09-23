@@ -4,12 +4,13 @@
 
 import * as z from "zod";
 import { PetstoreCore } from "../core.js";
-import { encodeJSON, encodeSimple } from "../lib/encodings.js";
+import { encodeFormQuery } from "../lib/encodings.js";
 import * as M from "../lib/matchers.js";
 import { safeParse } from "../lib/schemas.js";
 import { RequestOptions } from "../lib/sdks.js";
 import { extractSecurity, resolveGlobalSecurity } from "../lib/security.js";
 import { pathToFunc } from "../lib/url.js";
+import * as components from "../models/components/index.js";
 import {
   ConnectionError,
   InvalidRequestError,
@@ -17,24 +18,28 @@ import {
   RequestTimeoutError,
   UnexpectedClientError,
 } from "../models/errors/httpclienterrors.js";
+import * as errors from "../models/errors/index.js";
 import { SDKError } from "../models/errors/sdkerror.js";
 import { SDKValidationError } from "../models/errors/sdkvalidationerror.js";
 import * as operations from "../models/operations/index.js";
 import { Result } from "../types/fp.js";
 
 /**
- * Update user
+ * Finds Pets by status
  *
  * @remarks
- * This can only be done by the logged in user.
+ * Multiple status values can be provided with comma separated strings
  */
-export async function userUpdateUser(
+export async function petFindByStatus(
   client: PetstoreCore,
-  request: operations.UpdateUserRequest,
+  request: operations.FindPetsByStatusRequest,
   options?: RequestOptions,
 ): Promise<
   Result<
-    void,
+    Array<components.Pet>,
+    | errors.ApiErrorInvalidInput
+    | errors.ApiErrorUnauthorized
+    | errors.ApiErrorNotFound
     | SDKError
     | SDKValidationError
     | UnexpectedClientError
@@ -48,33 +53,29 @@ export async function userUpdateUser(
 
   const parsed = safeParse(
     input,
-    (value) => operations.UpdateUserRequest$outboundSchema.parse(value),
+    (value) => operations.FindPetsByStatusRequest$outboundSchema.parse(value),
     "Input validation failed",
   );
   if (!parsed.ok) {
     return parsed;
   }
   const payload = parsed.value;
-  const body = encodeJSON("body", payload.User, { explode: true });
+  const body = null;
 
-  const pathParams = {
-    username: encodeSimple("username", payload.username, {
-      explode: false,
-      charEncoding: "percent",
-    }),
-  };
+  const path = pathToFunc("/pet/findByStatus")();
 
-  const path = pathToFunc("/user/{username}")(pathParams);
+  const query = encodeFormQuery({
+    "status": payload.status,
+  });
 
   const headers = new Headers({
-    "Content-Type": "application/json",
-    Accept: "*/*",
+    Accept: "application/json",
   });
 
   const secConfig = await extractSecurity(client._options.apiKey);
   const securityInput = secConfig == null ? {} : { apiKey: secConfig };
   const context = {
-    operationID: "updateUser",
+    operationID: "findPetsByStatus",
     oAuth2Scopes: [],
     securitySource: client._options.apiKey,
   };
@@ -82,9 +83,10 @@ export async function userUpdateUser(
 
   const requestRes = client._createRequest(context, {
     security: requestSecurity,
-    method: "PUT",
+    method: "GET",
     path: path,
     headers: headers,
+    query: query,
     body: body,
     timeoutMs: options?.timeoutMs || client._options.timeoutMs || -1,
   }, options);
@@ -95,7 +97,7 @@ export async function userUpdateUser(
 
   const doResult = await client._do(req, {
     context,
-    errorCodes: ["4XX", "5XX"],
+    errorCodes: ["400", "401", "404", "4XX", "5XX"],
     retryConfig: options?.retries
       || client._options.retryConfig,
     retryCodes: options?.retryCodes || ["429", "500", "502", "503", "504"],
@@ -105,8 +107,15 @@ export async function userUpdateUser(
   }
   const response = doResult.value;
 
+  const responseFields = {
+    HttpMeta: { Response: response, Request: req },
+  };
+
   const [result] = await M.match<
-    void,
+    Array<components.Pet>,
+    | errors.ApiErrorInvalidInput
+    | errors.ApiErrorUnauthorized
+    | errors.ApiErrorNotFound
     | SDKError
     | SDKValidationError
     | UnexpectedClientError
@@ -115,9 +124,12 @@ export async function userUpdateUser(
     | RequestTimeoutError
     | ConnectionError
   >(
-    M.nil(200, z.void()),
+    M.json(200, z.array(components.Pet$inboundSchema)),
+    M.jsonErr(400, errors.ApiErrorInvalidInput$inboundSchema),
+    M.jsonErr(401, errors.ApiErrorUnauthorized$inboundSchema),
+    M.jsonErr(404, errors.ApiErrorNotFound$inboundSchema),
     M.fail(["4XX", "5XX"]),
-  )(response);
+  )(response, { extraFields: responseFields });
   if (!result.ok) {
     return result;
   }

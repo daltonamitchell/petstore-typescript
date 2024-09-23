@@ -3,7 +3,7 @@
  */
 
 import { PetstoreCore } from "../core.js";
-import { encodeJSON } from "../lib/encodings.js";
+import { encodeSimple } from "../lib/encodings.js";
 import * as M from "../lib/matchers.js";
 import { safeParse } from "../lib/schemas.js";
 import { RequestOptions } from "../lib/sdks.js";
@@ -17,23 +17,25 @@ import {
   RequestTimeoutError,
   UnexpectedClientError,
 } from "../models/errors/httpclienterrors.js";
+import * as errors from "../models/errors/index.js";
 import { SDKError } from "../models/errors/sdkerror.js";
 import { SDKValidationError } from "../models/errors/sdkvalidationerror.js";
+import * as operations from "../models/operations/index.js";
 import { Result } from "../types/fp.js";
 
 /**
- * Add a new pet to the store
- *
- * @remarks
- * Add a new pet to the store
+ * Deletes a pet
  */
-export async function petAddPet(
+export async function petDelete(
   client: PetstoreCore,
-  request: components.Pet,
+  request: operations.DeletePetRequest,
   options?: RequestOptions,
 ): Promise<
   Result<
     components.Pet,
+    | errors.ApiErrorInvalidInput
+    | errors.ApiErrorUnauthorized
+    | errors.ApiErrorNotFound
     | SDKError
     | SDKValidationError
     | UnexpectedClientError
@@ -47,26 +49,36 @@ export async function petAddPet(
 
   const parsed = safeParse(
     input,
-    (value) => components.Pet$outboundSchema.parse(value),
+    (value) => operations.DeletePetRequest$outboundSchema.parse(value),
     "Input validation failed",
   );
   if (!parsed.ok) {
     return parsed;
   }
   const payload = parsed.value;
-  const body = encodeJSON("body", payload, { explode: true });
+  const body = null;
 
-  const path = pathToFunc("/pet")();
+  const pathParams = {
+    petId: encodeSimple("petId", payload.petId, {
+      explode: false,
+      charEncoding: "percent",
+    }),
+  };
+
+  const path = pathToFunc("/pet/{petId}")(pathParams);
 
   const headers = new Headers({
-    "Content-Type": "application/json",
     Accept: "application/json",
+    "api_key": encodeSimple("api_key", payload.api_key, {
+      explode: false,
+      charEncoding: "none",
+    }),
   });
 
   const secConfig = await extractSecurity(client._options.apiKey);
   const securityInput = secConfig == null ? {} : { apiKey: secConfig };
   const context = {
-    operationID: "addPet",
+    operationID: "deletePet",
     oAuth2Scopes: [],
     securitySource: client._options.apiKey,
   };
@@ -74,7 +86,7 @@ export async function petAddPet(
 
   const requestRes = client._createRequest(context, {
     security: requestSecurity,
-    method: "POST",
+    method: "DELETE",
     path: path,
     headers: headers,
     body: body,
@@ -87,7 +99,7 @@ export async function petAddPet(
 
   const doResult = await client._do(req, {
     context,
-    errorCodes: ["405", "4XX", "5XX"],
+    errorCodes: ["400", "401", "404", "4XX", "5XX"],
     retryConfig: options?.retries
       || client._options.retryConfig,
     retryCodes: options?.retryCodes || ["429", "500", "502", "503", "504"],
@@ -97,8 +109,15 @@ export async function petAddPet(
   }
   const response = doResult.value;
 
+  const responseFields = {
+    HttpMeta: { Response: response, Request: req },
+  };
+
   const [result] = await M.match<
     components.Pet,
+    | errors.ApiErrorInvalidInput
+    | errors.ApiErrorUnauthorized
+    | errors.ApiErrorNotFound
     | SDKError
     | SDKValidationError
     | UnexpectedClientError
@@ -108,8 +127,11 @@ export async function petAddPet(
     | ConnectionError
   >(
     M.json(200, components.Pet$inboundSchema),
-    M.fail([405, "4XX", "5XX"]),
-  )(response);
+    M.jsonErr(400, errors.ApiErrorInvalidInput$inboundSchema),
+    M.jsonErr(401, errors.ApiErrorUnauthorized$inboundSchema),
+    M.jsonErr(404, errors.ApiErrorNotFound$inboundSchema),
+    M.fail(["4XX", "5XX"]),
+  )(response, { extraFields: responseFields });
   if (!result.ok) {
     return result;
   }

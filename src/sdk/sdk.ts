@@ -4,13 +4,20 @@
 
 import { ClientSDK } from "../lib/sdks.js";
 import { Pet } from "./pet.js";
+import { Pets } from "./pets.js";
 import { Store } from "./store.js";
 import { User } from "./user.js";
+import { Users } from "./users.js";
 
 export class Petstore extends ClientSDK {
   private _pet?: Pet;
   get pet(): Pet {
     return (this._pet ??= new Pet(this._options));
+  }
+
+  private _pets?: Pets;
+  get pets(): Pets {
+    return (this._pets ??= new Pets(this._options));
   }
 
   private _store?: Store;
@@ -21,5 +28,10 @@ export class Petstore extends ClientSDK {
   private _user?: User;
   get user(): User {
     return (this._user ??= new User(this._options));
+  }
+
+  private _users?: Users;
+  get users(): Users {
+    return (this._users ??= new Users(this._options));
   }
 }

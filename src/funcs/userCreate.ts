@@ -27,7 +27,7 @@ import { Result } from "../types/fp.js";
  * @remarks
  * This can only be done by the logged in user.
  */
-export async function userCreateUser(
+export async function userCreate(
   client: PetstoreCore,
   request?: components.User | undefined,
   options?: RequestOptions,

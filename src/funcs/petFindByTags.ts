@@ -4,7 +4,7 @@
 
 import * as z from "zod";
 import { PetstoreCore } from "../core.js";
-import { encodeJSON } from "../lib/encodings.js";
+import { encodeFormQuery } from "../lib/encodings.js";
 import * as M from "../lib/matchers.js";
 import { safeParse } from "../lib/schemas.js";
 import { RequestOptions } from "../lib/sdks.js";
@@ -18,23 +18,28 @@ import {
   RequestTimeoutError,
   UnexpectedClientError,
 } from "../models/errors/httpclienterrors.js";
+import * as errors from "../models/errors/index.js";
 import { SDKError } from "../models/errors/sdkerror.js";
 import { SDKValidationError } from "../models/errors/sdkvalidationerror.js";
+import * as operations from "../models/operations/index.js";
 import { Result } from "../types/fp.js";
 
 /**
- * Creates list of users with given input array
+ * Finds Pets by tags
  *
  * @remarks
- * Creates list of users with given input array
+ * Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.
  */
-export async function userCreateUsersWithListInput(
+export async function petFindByTags(
   client: PetstoreCore,
-  request?: Array<components.User> | undefined,
+  request: operations.FindPetsByTagsRequest,
   options?: RequestOptions,
 ): Promise<
   Result<
-    components.User,
+    Array<components.Pet>,
+    | errors.ApiErrorInvalidInput
+    | errors.ApiErrorUnauthorized
+    | errors.ApiErrorNotFound
     | SDKError
     | SDKValidationError
     | UnexpectedClientError
@@ -48,28 +53,29 @@ export async function userCreateUsersWithListInput(
 
   const parsed = safeParse(
     input,
-    (value) => z.array(components.User$outboundSchema).optional().parse(value),
+    (value) => operations.FindPetsByTagsRequest$outboundSchema.parse(value),
     "Input validation failed",
   );
   if (!parsed.ok) {
     return parsed;
   }
   const payload = parsed.value;
-  const body = payload === undefined
-    ? null
-    : encodeJSON("body", payload, { explode: true });
+  const body = null;
 
-  const path = pathToFunc("/user/createWithList")();
+  const path = pathToFunc("/pet/findByTags")();
+
+  const query = encodeFormQuery({
+    "tags": payload.tags,
+  });
 
   const headers = new Headers({
-    "Content-Type": "application/json",
     Accept: "application/json",
   });
 
   const secConfig = await extractSecurity(client._options.apiKey);
   const securityInput = secConfig == null ? {} : { apiKey: secConfig };
   const context = {
-    operationID: "createUsersWithListInput",
+    operationID: "findPetsByTags",
     oAuth2Scopes: [],
     securitySource: client._options.apiKey,
   };
@@ -77,9 +83,10 @@ export async function userCreateUsersWithListInput(
 
   const requestRes = client._createRequest(context, {
     security: requestSecurity,
-    method: "POST",
+    method: "GET",
     path: path,
     headers: headers,
+    query: query,
     body: body,
     timeoutMs: options?.timeoutMs || client._options.timeoutMs || -1,
   }, options);
@@ -90,7 +97,7 @@ export async function userCreateUsersWithListInput(
 
   const doResult = await client._do(req, {
     context,
-    errorCodes: ["4XX", "5XX"],
+    errorCodes: ["400", "401", "404", "4XX", "5XX"],
     retryConfig: options?.retries
       || client._options.retryConfig,
     retryCodes: options?.retryCodes || ["429", "500", "502", "503", "504"],
@@ -100,8 +107,15 @@ export async function userCreateUsersWithListInput(
   }
   const response = doResult.value;
 
+  const responseFields = {
+    HttpMeta: { Response: response, Request: req },
+  };
+
   const [result] = await M.match<
-    components.User,
+    Array<components.Pet>,
+    | errors.ApiErrorInvalidInput
+    | errors.ApiErrorUnauthorized
+    | errors.ApiErrorNotFound
     | SDKError
     | SDKValidationError
     | UnexpectedClientError
@@ -110,9 +124,12 @@ export async function userCreateUsersWithListInput(
     | RequestTimeoutError
     | ConnectionError
   >(
-    M.json(200, components.User$inboundSchema),
+    M.json(200, z.array(components.Pet$inboundSchema)),
+    M.jsonErr(400, errors.ApiErrorInvalidInput$inboundSchema),
+    M.jsonErr(401, errors.ApiErrorUnauthorized$inboundSchema),
+    M.jsonErr(404, errors.ApiErrorNotFound$inboundSchema),
     M.fail(["4XX", "5XX"]),
-  )(response);
+  )(response, { extraFields: responseFields });
   if (!result.ok) {
     return result;
   }

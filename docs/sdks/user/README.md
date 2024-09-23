@@ -7,15 +7,13 @@ Operations about user
 
 ### Available Operations
 
-* [createUser](#createuser) - Create user
-* [createUsersWithListInput](#createuserswithlistinput) - Creates list of users with given input array
-* [loginUser](#loginuser) - Logs user into the system
-* [logoutUser](#logoutuser) - Logs out current logged in user session
-* [getUserByName](#getuserbyname) - Get user by user name
-* [updateUser](#updateuser) - Update user
-* [deleteUser](#deleteuser) - Delete user
+* [create](#create) - Create user
+* [createWithList](#createwithlist) - Creates list of users with given input array
+* [logout](#logout) - Logs out current logged in user session
+* [get](#get) - Get user by user name
+* [delete](#delete) - Delete user
 
-## createUser
+## create
 
 This can only be done by the logged in user.
 
@@ -29,7 +27,7 @@ const petstore = new Petstore({
 });
 
 async function run() {
-  const result = await petstore.user.createUser({
+  const result = await petstore.user.create({
     id: 10,
     username: "theUser",
     firstName: "John",
@@ -53,7 +51,7 @@ The standalone function version of this method:
 
 ```typescript
 import { PetstoreCore } from "petstore/core.js";
-import { userCreateUser } from "petstore/funcs/userCreateUser.js";
+import { userCreate } from "petstore/funcs/userCreate.js";
 
 // Use `PetstoreCore` for best tree-shaking performance.
 // You can create one instance of it to use across an application.
@@ -62,7 +60,7 @@ const petstore = new PetstoreCore({
 });
 
 async function run() {
-  const res = await userCreateUser(petstore, {
+  const res = await userCreate(petstore, {
     id: 10,
     username: "theUser",
     firstName: "John",
@@ -106,7 +104,7 @@ run();
 | errors.SDKError | 4xx-5xx         | */*             |
 
 
-## createUsersWithListInput
+## createWithList
 
 Creates list of users with given input array
 
@@ -120,7 +118,7 @@ const petstore = new Petstore({
 });
 
 async function run() {
-  const result = await petstore.user.createUsersWithListInput([
+  const result = await petstore.user.createWithList([
     {
       id: 10,
       username: "theUser",
@@ -146,7 +144,7 @@ The standalone function version of this method:
 
 ```typescript
 import { PetstoreCore } from "petstore/core.js";
-import { userCreateUsersWithListInput } from "petstore/funcs/userCreateUsersWithListInput.js";
+import { userCreateWithList } from "petstore/funcs/userCreateWithList.js";
 
 // Use `PetstoreCore` for best tree-shaking performance.
 // You can create one instance of it to use across an application.
@@ -155,7 +153,7 @@ const petstore = new PetstoreCore({
 });
 
 async function run() {
-  const res = await userCreateUsersWithListInput(petstore, [
+  const res = await userCreateWithList(petstore, [
     {
       id: 10,
       username: "theUser",
@@ -201,83 +199,7 @@ run();
 | errors.SDKError | 4xx-5xx         | */*             |
 
 
-## loginUser
-
-Logs user into the system
-
-### Example Usage
-
-```typescript
-import { Petstore } from "petstore";
-
-const petstore = new Petstore({
-  apiKey: process.env["PETSTORE_API_KEY"] ?? "",
-});
-
-async function run() {
-  const result = await petstore.user.loginUser({});
-  
-  // Handle the result
-  console.log(result)
-}
-
-run();
-```
-
-### Standalone function
-
-The standalone function version of this method:
-
-```typescript
-import { PetstoreCore } from "petstore/core.js";
-import { userLoginUser } from "petstore/funcs/userLoginUser.js";
-
-// Use `PetstoreCore` for best tree-shaking performance.
-// You can create one instance of it to use across an application.
-const petstore = new PetstoreCore({
-  apiKey: process.env["PETSTORE_API_KEY"] ?? "",
-});
-
-async function run() {
-  const res = await userLoginUser(petstore, {});
-
-  if (!res.ok) {
-    throw res.error;
-  }
-
-  const { value: result } = res;
-
-  // Handle the result
-  console.log(result)
-}
-
-run();
-```
-
-### Parameters
-
-| Parameter                                                                                                                                                                      | Type                                                                                                                                                                           | Required                                                                                                                                                                       | Description                                                                                                                                                                    |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `request`                                                                                                                                                                      | [operations.LoginUserRequest](../../models/operations/loginuserrequest.md)                                                                                                     | :heavy_check_mark:                                                                                                                                                             | The request object to use for the request.                                                                                                                                     |
-| `options`                                                                                                                                                                      | RequestOptions                                                                                                                                                                 | :heavy_minus_sign:                                                                                                                                                             | Used to set various options for making HTTP requests.                                                                                                                          |
-| `options.fetchOptions`                                                                                                                                                         | [RequestInit](https://developer.mozilla.org/en-US/docs/Web/API/Request/Request#options)                                                                                        | :heavy_minus_sign:                                                                                                                                                             | Options that are passed to the underlying HTTP request. This can be used to inject extra headers for examples. All `Request` options, except `method` and `body`, are allowed. |
-| `options.retries`                                                                                                                                                              | [RetryConfig](../../lib/utils/retryconfig.md)                                                                                                                                  | :heavy_minus_sign:                                                                                                                                                             | Enables retrying HTTP requests under certain failure conditions.                                                                                                               |
-
-### Response
-
-**Promise\<[operations.LoginUserResponse](../../models/operations/loginuserresponse.md)\>**
-
-### Errors
-
-| Error Object                | Status Code                 | Content Type                |
-| --------------------------- | --------------------------- | --------------------------- |
-| errors.ApiErrorInvalidInput | 400                         | application/json            |
-| errors.ApiErrorUnauthorized | 401                         | application/json            |
-| errors.ApiErrorNotFound     | 404                         | application/json            |
-| errors.SDKError             | 4xx-5xx                     | */*                         |
-
-
-## logoutUser
+## logout
 
 Logs out current logged in user session
 
@@ -291,7 +213,7 @@ const petstore = new Petstore({
 });
 
 async function run() {
-  await petstore.user.logoutUser();
+  await petstore.user.logout();
 }
 
 run();
@@ -303,7 +225,7 @@ The standalone function version of this method:
 
 ```typescript
 import { PetstoreCore } from "petstore/core.js";
-import { userLogoutUser } from "petstore/funcs/userLogoutUser.js";
+import { userLogout } from "petstore/funcs/userLogout.js";
 
 // Use `PetstoreCore` for best tree-shaking performance.
 // You can create one instance of it to use across an application.
@@ -312,7 +234,7 @@ const petstore = new PetstoreCore({
 });
 
 async function run() {
-  const res = await userLogoutUser(petstore);
+  const res = await userLogout(petstore);
 
   if (!res.ok) {
     throw res.error;
@@ -345,7 +267,7 @@ run();
 | errors.SDKError | 4xx-5xx         | */*             |
 
 
-## getUserByName
+## get
 
 Get user by user name
 
@@ -359,7 +281,7 @@ const petstore = new Petstore({
 });
 
 async function run() {
-  const result = await petstore.user.getUserByName({
+  const result = await petstore.user.get({
     username: "Zachery_Lubowitz15",
   });
   
@@ -376,7 +298,7 @@ The standalone function version of this method:
 
 ```typescript
 import { PetstoreCore } from "petstore/core.js";
-import { userGetUserByName } from "petstore/funcs/userGetUserByName.js";
+import { userGet } from "petstore/funcs/userGet.js";
 
 // Use `PetstoreCore` for best tree-shaking performance.
 // You can create one instance of it to use across an application.
@@ -385,7 +307,7 @@ const petstore = new PetstoreCore({
 });
 
 async function run() {
-  const res = await userGetUserByName(petstore, {
+  const res = await userGet(petstore, {
     username: "Zachery_Lubowitz15",
   });
 
@@ -425,7 +347,7 @@ run();
 | errors.SDKError             | 4xx-5xx                     | */*                         |
 
 
-## updateUser
+## delete
 
 This can only be done by the logged in user.
 
@@ -439,100 +361,7 @@ const petstore = new Petstore({
 });
 
 async function run() {
-  await petstore.user.updateUser({
-    username: "Dandre_Hand41",
-    user: {
-      id: 10,
-      username: "theUser",
-      firstName: "John",
-      lastName: "James",
-      email: "john@email.com",
-      password: "12345",
-      phone: "12345",
-      userStatus: 1,
-    },
-  });
-}
-
-run();
-```
-
-### Standalone function
-
-The standalone function version of this method:
-
-```typescript
-import { PetstoreCore } from "petstore/core.js";
-import { userUpdateUser } from "petstore/funcs/userUpdateUser.js";
-
-// Use `PetstoreCore` for best tree-shaking performance.
-// You can create one instance of it to use across an application.
-const petstore = new PetstoreCore({
-  apiKey: process.env["PETSTORE_API_KEY"] ?? "",
-});
-
-async function run() {
-  const res = await userUpdateUser(petstore, {
-    username: "Dandre_Hand41",
-    user: {
-      id: 10,
-      username: "theUser",
-      firstName: "John",
-      lastName: "James",
-      email: "john@email.com",
-      password: "12345",
-      phone: "12345",
-      userStatus: 1,
-    },
-  });
-
-  if (!res.ok) {
-    throw res.error;
-  }
-
-  const { value: result } = res;
-
-  
-}
-
-run();
-```
-
-### Parameters
-
-| Parameter                                                                                                                                                                      | Type                                                                                                                                                                           | Required                                                                                                                                                                       | Description                                                                                                                                                                    |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `request`                                                                                                                                                                      | [operations.UpdateUserRequest](../../models/operations/updateuserrequest.md)                                                                                                   | :heavy_check_mark:                                                                                                                                                             | The request object to use for the request.                                                                                                                                     |
-| `options`                                                                                                                                                                      | RequestOptions                                                                                                                                                                 | :heavy_minus_sign:                                                                                                                                                             | Used to set various options for making HTTP requests.                                                                                                                          |
-| `options.fetchOptions`                                                                                                                                                         | [RequestInit](https://developer.mozilla.org/en-US/docs/Web/API/Request/Request#options)                                                                                        | :heavy_minus_sign:                                                                                                                                                             | Options that are passed to the underlying HTTP request. This can be used to inject extra headers for examples. All `Request` options, except `method` and `body`, are allowed. |
-| `options.retries`                                                                                                                                                              | [RetryConfig](../../lib/utils/retryconfig.md)                                                                                                                                  | :heavy_minus_sign:                                                                                                                                                             | Enables retrying HTTP requests under certain failure conditions.                                                                                                               |
-
-### Response
-
-**Promise\<void\>**
-
-### Errors
-
-| Error Object    | Status Code     | Content Type    |
-| --------------- | --------------- | --------------- |
-| errors.SDKError | 4xx-5xx         | */*             |
-
-
-## deleteUser
-
-This can only be done by the logged in user.
-
-### Example Usage
-
-```typescript
-import { Petstore } from "petstore";
-
-const petstore = new Petstore({
-  apiKey: process.env["PETSTORE_API_KEY"] ?? "",
-});
-
-async function run() {
-  const result = await petstore.user.deleteUser({
+  const result = await petstore.user.delete({
     username: "Demetris_Schmitt",
   });
   
@@ -549,7 +378,7 @@ The standalone function version of this method:
 
 ```typescript
 import { PetstoreCore } from "petstore/core.js";
-import { userDeleteUser } from "petstore/funcs/userDeleteUser.js";
+import { userDelete } from "petstore/funcs/userDelete.js";
 
 // Use `PetstoreCore` for best tree-shaking performance.
 // You can create one instance of it to use across an application.
@@ -558,7 +387,7 @@ const petstore = new PetstoreCore({
 });
 
 async function run() {
-  const res = await userDeleteUser(petstore, {
+  const res = await userDelete(petstore, {
     username: "Demetris_Schmitt",
   });
 

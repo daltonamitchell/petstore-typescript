@@ -6,7 +6,7 @@
 import { UpdateUserRequest } from "petstore/models/operations";
 
 let value: UpdateUserRequest = {
-  username: "Kenyon2",
+  username: "Orlando46",
   user: {
     id: 10,
     username: "theUser",

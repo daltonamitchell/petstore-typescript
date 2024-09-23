@@ -1,0 +1,129 @@
+overlay: 1.0.0
+info:
+  title: Speakeasy Modifications
+  version: 0.0.2
+  x-speakeasy-metadata:
+    after: ""
+    before: ""
+    type: speakeasy-modifications
+actions:
+  - target: $["paths"]["/pet/findByStatus"]["get"]
+    update:
+      x-speakeasy-name-override: findByStatus
+    x-speakeasy-metadata:
+      type: method-name
+      before: sdk.pet.findPetsByStatus()
+      after: sdk.pet.findByStatus()
+      reviewed_at: 1727113314121
+      created_at: 1727113305443
+  - target: $["paths"]["/pet/findByTags"]["get"]
+    update:
+      x-speakeasy-name-override: findByTags
+    x-speakeasy-metadata:
+      type: method-name
+      before: sdk.pet.findPetsByTags()
+      after: sdk.pet.findByTags()
+      reviewed_at: 1727113314121
+      created_at: 1727113305443
+  - target: $["paths"]["/user/logout"]["get"]
+    update:
+      x-speakeasy-name-override: logout
+    x-speakeasy-metadata:
+      type: method-name
+      before: sdk.user.logoutUser()
+      after: sdk.user.logout()
+      reviewed_at: 1727113314121
+      created_at: 1727113305443
+  - target: $["paths"]["/pet"]["put"]
+    update:
+      x-speakeasy-name-override: update
+    x-speakeasy-metadata:
+      type: method-name
+      before: sdk.pet.updatePet()
+      after: sdk.pet.update()
+      reviewed_at: 1727113314121
+      created_at: 1727113305443
+  - target: $["paths"]["/user/{username}"]["get"]
+    update:
+      x-speakeasy-name-override: get
+    x-speakeasy-metadata:
+      type: method-name
+      before: sdk.user.getUserByName()
+      after: sdk.user.get()
+      reviewed_at: 1727113314121
+      created_at: 1727113305443
+  - target: $["paths"]["/pet"]["post"]
+    update:
+      x-speakeasy-group: pets
+      x-speakeasy-name-override: add
+    x-speakeasy-metadata:
+      type: method-name
+      before: sdk.pet.addPet()
+      after: sdk.pets.add()
+      reviewed_at: 1727113314121
+      created_at: 1727113305443
+  - target: $["paths"]["/pet/{petId}"]["delete"]
+    update:
+      x-speakeasy-name-override: delete
+    x-speakeasy-metadata:
+      type: method-name
+      before: sdk.pet.deletePet()
+      after: sdk.pet.delete()
+      reviewed_at: 1727113314121
+      created_at: 1727113305443
+  - target: $["paths"]["/user/{username}"]["put"]
+    update:
+      x-speakeasy-group: users
+      x-speakeasy-name-override: update
+    x-speakeasy-metadata:
+      type: method-name
+      before: sdk.user.updateUser()
+      after: sdk.users.update()
+      reviewed_at: 1727113314121
+      created_at: 1727113305443
+  - target: $["paths"]["/pet/{petId}"]["get"]
+    update:
+      x-speakeasy-name-override: getById
+    x-speakeasy-metadata:
+      type: method-name
+      before: sdk.pet.getPetById()
+      after: sdk.pet.getById()
+      reviewed_at: 1727113314121
+      created_at: 1727113305443
+  - target: $["paths"]["/user/{username}"]["delete"]
+    update:
+      x-speakeasy-name-override: delete
+    x-speakeasy-metadata:
+      type: method-name
+      before: sdk.user.deleteUser()
+      after: sdk.user.delete()
+      reviewed_at: 1727113314121
+      created_at: 1727113305443
+  - target: $["paths"]["/user/login"]["get"]
+    update:
+      x-speakeasy-group: users
+      x-speakeasy-name-override: login
+    x-speakeasy-metadata:
+      type: method-name
+      before: sdk.user.loginUser()
+      after: sdk.users.login()
+      reviewed_at: 1727113314121
+      created_at: 1727113305443
+  - target: $["paths"]["/user"]["post"]
+    update:
+      x-speakeasy-name-override: create
+    x-speakeasy-metadata:
+      type: method-name
+      before: sdk.user.createUser()
+      after: sdk.user.create()
+      reviewed_at: 1727113314121
+      created_at: 1727113305443
+  - target: $["paths"]["/user/createWithList"]["post"]
+    update:
+      x-speakeasy-name-override: createWithList
+    x-speakeasy-metadata:
+      type: method-name
+      before: sdk.user.createUsersWithListInput()
+      after: sdk.user.createWithList()
+      reviewed_at: 1727113314121
+      created_at: 1727113305443

@@ -2,7 +2,7 @@ speakeasyVersion: 1.402.0
 sources:
     petstore-oas:
         sourceNamespace: petstore-oas
-        sourceRevisionDigest: sha256:7e43ed0a726186a3188d3e604bc6ce9aa07492200d0954323a9e6665d8b8bf92
+        sourceRevisionDigest: sha256:4708bdb522ed478243844a4c99a375e345a79ec1dae4970c8cbc9f03fa545730
         sourceBlobDigest: sha256:0fc901d90db6e9f6bb441951cad401c7c4c36a39f51359bb594433f4df152929
         tags:
             - latest
@@ -10,7 +10,7 @@ targets:
     petstore:
         source: petstore-oas
         sourceNamespace: petstore-oas
-        sourceRevisionDigest: sha256:7e43ed0a726186a3188d3e604bc6ce9aa07492200d0954323a9e6665d8b8bf92
+        sourceRevisionDigest: sha256:4708bdb522ed478243844a4c99a375e345a79ec1dae4970c8cbc9f03fa545730
         sourceBlobDigest: sha256:0fc901d90db6e9f6bb441951cad401c7c4c36a39f51359bb594433f4df152929
 workflow:
     workflowVersion: 1.0.0
@@ -19,9 +19,14 @@ workflow:
         petstore-oas:
             inputs:
                 - location: openapi.yaml
+            overlays:
+                - location: .speakeasy/speakeasy-modifications-overlay.yaml
             registry:
                 location: registry.speakeasyapi.dev/coffeecup/coffeecup/petstore-oas
     targets:
         petstore:
             target: typescript
             source: petstore-oas
+            publish:
+                npm:
+                    token: $npm_token

@@ -28,7 +28,7 @@ import { Result } from "../types/fp.js";
  * @remarks
  * Update an existing pet by Id
  */
-export async function petUpdatePet(
+export async function petUpdate(
   client: PetstoreCore,
   request: components.Pet,
   options?: RequestOptions,

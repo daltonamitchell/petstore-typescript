@@ -56,25 +56,25 @@ The SDK can be installed with either [npm](https://www.npmjs.com/), [pnpm](https
 ### NPM
 
 ```bash
-npm add <UNSET>
+npm add petstore
 ```
 
 ### PNPM
 
 ```bash
-pnpm add <UNSET>
+pnpm add petstore
 ```
 
 ### Bun
 
 ```bash
-bun add <UNSET>
+bun add petstore
 ```
 
 ### Yarn
 
 ```bash
-yarn add <UNSET> zod
+yarn add petstore zod
 
 # Note that Yarn does not install peer dependencies automatically. You will need
 # to install zod as shown above.
@@ -100,7 +100,7 @@ const petstore = new Petstore({
 });
 
 async function run() {
-  const result = await petstore.pet.updatePet({
+  const result = await petstore.pet.update({
     id: 10,
     name: "doggie",
     category: {
@@ -130,13 +130,16 @@ run();
 
 ### [pet](docs/sdks/pet/README.md)
 
-* [updatePet](docs/sdks/pet/README.md#updatepet) - Update an existing pet
-* [addPet](docs/sdks/pet/README.md#addpet) - Add a new pet to the store
-* [findPetsByStatus](docs/sdks/pet/README.md#findpetsbystatus) - Finds Pets by status
-* [findPetsByTags](docs/sdks/pet/README.md#findpetsbytags) - Finds Pets by tags
-* [getPetById](docs/sdks/pet/README.md#getpetbyid) - Find pet by ID
-* [deletePet](docs/sdks/pet/README.md#deletepet) - Deletes a pet
+* [update](docs/sdks/pet/README.md#update) - Update an existing pet
+* [findByStatus](docs/sdks/pet/README.md#findbystatus) - Finds Pets by status
+* [findByTags](docs/sdks/pet/README.md#findbytags) - Finds Pets by tags
+* [getById](docs/sdks/pet/README.md#getbyid) - Find pet by ID
+* [delete](docs/sdks/pet/README.md#delete) - Deletes a pet
 * [uploadFile](docs/sdks/pet/README.md#uploadfile) - uploads an image
+
+### [pets](docs/sdks/pets/README.md)
+
+* [add](docs/sdks/pets/README.md#add) - Add a new pet to the store
 
 
 ### [store](docs/sdks/store/README.md)
@@ -148,13 +151,16 @@ run();
 
 ### [user](docs/sdks/user/README.md)
 
-* [createUser](docs/sdks/user/README.md#createuser) - Create user
-* [createUsersWithListInput](docs/sdks/user/README.md#createuserswithlistinput) - Creates list of users with given input array
-* [loginUser](docs/sdks/user/README.md#loginuser) - Logs user into the system
-* [logoutUser](docs/sdks/user/README.md#logoutuser) - Logs out current logged in user session
-* [getUserByName](docs/sdks/user/README.md#getuserbyname) - Get user by user name
-* [updateUser](docs/sdks/user/README.md#updateuser) - Update user
-* [deleteUser](docs/sdks/user/README.md#deleteuser) - Delete user
+* [create](docs/sdks/user/README.md#create) - Create user
+* [createWithList](docs/sdks/user/README.md#createwithlist) - Creates list of users with given input array
+* [logout](docs/sdks/user/README.md#logout) - Logs out current logged in user session
+* [get](docs/sdks/user/README.md#get) - Get user by user name
+* [delete](docs/sdks/user/README.md#delete) - Delete user
+
+### [users](docs/sdks/users/README.md)
+
+* [login](docs/sdks/users/README.md#login) - Logs user into the system
+* [update](docs/sdks/users/README.md#update) - Update user
 
 </details>
 <!-- End Available Resources and Operations [operations] -->
@@ -174,24 +180,24 @@ To read more about standalone functions, check [FUNCTIONS.md](./FUNCTIONS.md).
 
 <summary>Available standalone functions</summary>
 
-- [petAddPet](docs/sdks/pet/README.md#addpet)
-- [petDeletePet](docs/sdks/pet/README.md#deletepet)
-- [petFindPetsByStatus](docs/sdks/pet/README.md#findpetsbystatus)
-- [petFindPetsByTags](docs/sdks/pet/README.md#findpetsbytags)
-- [petGetPetById](docs/sdks/pet/README.md#getpetbyid)
-- [petUpdatePet](docs/sdks/pet/README.md#updatepet)
+- [petDelete](docs/sdks/pet/README.md#delete)
+- [petFindByStatus](docs/sdks/pet/README.md#findbystatus)
+- [petFindByTags](docs/sdks/pet/README.md#findbytags)
+- [petGetById](docs/sdks/pet/README.md#getbyid)
+- [petUpdate](docs/sdks/pet/README.md#update)
 - [petUploadFile](docs/sdks/pet/README.md#uploadfile)
+- [petsAdd](docs/sdks/pets/README.md#add)
 - [storeDeleteOrder](docs/sdks/store/README.md#deleteorder)
 - [storeGetInventory](docs/sdks/store/README.md#getinventory)
 - [storeGetOrderById](docs/sdks/store/README.md#getorderbyid)
 - [storePlaceOrder](docs/sdks/store/README.md#placeorder)
-- [userCreateUser](docs/sdks/user/README.md#createuser)
-- [userCreateUsersWithListInput](docs/sdks/user/README.md#createuserswithlistinput)
-- [userDeleteUser](docs/sdks/user/README.md#deleteuser)
-- [userGetUserByName](docs/sdks/user/README.md#getuserbyname)
-- [userLoginUser](docs/sdks/user/README.md#loginuser)
-- [userLogoutUser](docs/sdks/user/README.md#logoutuser)
-- [userUpdateUser](docs/sdks/user/README.md#updateuser)
+- [userCreateWithList](docs/sdks/user/README.md#createwithlist)
+- [userCreate](docs/sdks/user/README.md#create)
+- [userDelete](docs/sdks/user/README.md#delete)
+- [userGet](docs/sdks/user/README.md#get)
+- [userLogout](docs/sdks/user/README.md#logout)
+- [usersLogin](docs/sdks/users/README.md#login)
+- [usersUpdate](docs/sdks/users/README.md#update)
 
 
 </details>
@@ -246,7 +252,7 @@ const petstore = new Petstore({
 });
 
 async function run() {
-  const result = await petstore.pet.updatePet({
+  const result = await petstore.pet.update({
     id: 10,
     name: "doggie",
     category: {
@@ -297,7 +303,7 @@ const petstore = new Petstore({
 });
 
 async function run() {
-  const result = await petstore.pet.updatePet({
+  const result = await petstore.pet.update({
     id: 10,
     name: "doggie",
     category: {
@@ -350,7 +356,7 @@ const petstore = new Petstore({
 async function run() {
   let result;
   try {
-    result = await petstore.pet.updatePet({
+    result = await petstore.pet.update({
       id: 10,
       name: "doggie",
       category: {
@@ -421,7 +427,7 @@ const petstore = new Petstore({
 });
 
 async function run() {
-  const result = await petstore.pet.updatePet({
+  const result = await petstore.pet.update({
     id: 10,
     name: "doggie",
     category: {
@@ -460,7 +466,7 @@ const petstore = new Petstore({
 });
 
 async function run() {
-  const result = await petstore.pet.updatePet({
+  const result = await petstore.pet.update({
     id: 10,
     name: "doggie",
     category: {
@@ -551,7 +557,7 @@ const petstore = new Petstore({
 });
 
 async function run() {
-  const result = await petstore.pet.updatePet({
+  const result = await petstore.pet.update({
     id: 10,
     name: "doggie",
     category: {

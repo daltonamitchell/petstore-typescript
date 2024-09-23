@@ -6,7 +6,7 @@
 import { DeleteUserRequest } from "petstore/models/operations";
 
 let value: DeleteUserRequest = {
-  username: "Orlando46",
+  username: "Kenyon2",
 };
 ```
 

@@ -3,7 +3,7 @@
  */
 
 import { PetstoreCore } from "../core.js";
-import { encodeSimple } from "../lib/encodings.js";
+import { encodeJSON } from "../lib/encodings.js";
 import * as M from "../lib/matchers.js";
 import { safeParse } from "../lib/schemas.js";
 import { RequestOptions } from "../lib/sdks.js";
@@ -17,28 +17,23 @@ import {
   RequestTimeoutError,
   UnexpectedClientError,
 } from "../models/errors/httpclienterrors.js";
-import * as errors from "../models/errors/index.js";
 import { SDKError } from "../models/errors/sdkerror.js";
 import { SDKValidationError } from "../models/errors/sdkvalidationerror.js";
-import * as operations from "../models/operations/index.js";
 import { Result } from "../types/fp.js";
 
 /**
- * Find pet by ID
+ * Add a new pet to the store
  *
  * @remarks
- * Returns a single pet
+ * Add a new pet to the store
  */
-export async function petGetPetById(
+export async function petsAdd(
   client: PetstoreCore,
-  request: operations.GetPetByIdRequest,
+  request: components.Pet,
   options?: RequestOptions,
 ): Promise<
   Result<
     components.Pet,
-    | errors.ApiErrorInvalidInput
-    | errors.ApiErrorUnauthorized
-    | errors.ApiErrorNotFound
     | SDKError
     | SDKValidationError
     | UnexpectedClientError
@@ -52,32 +47,26 @@ export async function petGetPetById(
 
   const parsed = safeParse(
     input,
-    (value) => operations.GetPetByIdRequest$outboundSchema.parse(value),
+    (value) => components.Pet$outboundSchema.parse(value),
     "Input validation failed",
   );
   if (!parsed.ok) {
     return parsed;
   }
   const payload = parsed.value;
-  const body = null;
+  const body = encodeJSON("body", payload, { explode: true });
 
-  const pathParams = {
-    petId: encodeSimple("petId", payload.petId, {
-      explode: false,
-      charEncoding: "percent",
-    }),
-  };
-
-  const path = pathToFunc("/pet/{petId}")(pathParams);
+  const path = pathToFunc("/pet")();
 
   const headers = new Headers({
+    "Content-Type": "application/json",
     Accept: "application/json",
   });
 
   const secConfig = await extractSecurity(client._options.apiKey);
   const securityInput = secConfig == null ? {} : { apiKey: secConfig };
   const context = {
-    operationID: "getPetById",
+    operationID: "addPet",
     oAuth2Scopes: [],
     securitySource: client._options.apiKey,
   };
@@ -85,7 +74,7 @@ export async function petGetPetById(
 
   const requestRes = client._createRequest(context, {
     security: requestSecurity,
-    method: "GET",
+    method: "POST",
     path: path,
     headers: headers,
     body: body,
@@ -98,7 +87,7 @@ export async function petGetPetById(
 
   const doResult = await client._do(req, {
     context,
-    errorCodes: ["400", "401", "404", "4XX", "5XX"],
+    errorCodes: ["405", "4XX", "5XX"],
     retryConfig: options?.retries
       || client._options.retryConfig,
     retryCodes: options?.retryCodes || ["429", "500", "502", "503", "504"],
@@ -108,15 +97,8 @@ export async function petGetPetById(
   }
   const response = doResult.value;
 
-  const responseFields = {
-    HttpMeta: { Response: response, Request: req },
-  };
-
   const [result] = await M.match<
     components.Pet,
-    | errors.ApiErrorInvalidInput
-    | errors.ApiErrorUnauthorized
-    | errors.ApiErrorNotFound
     | SDKError
     | SDKValidationError
     | UnexpectedClientError
@@ -126,11 +108,8 @@ export async function petGetPetById(
     | ConnectionError
   >(
     M.json(200, components.Pet$inboundSchema),
-    M.jsonErr(400, errors.ApiErrorInvalidInput$inboundSchema),
-    M.jsonErr(401, errors.ApiErrorUnauthorized$inboundSchema),
-    M.jsonErr(404, errors.ApiErrorNotFound$inboundSchema),
-    M.fail(["4XX", "5XX"]),
-  )(response, { extraFields: responseFields });
+    M.fail([405, "4XX", "5XX"]),
+  )(response);
   if (!result.ok) {
     return result;
   }

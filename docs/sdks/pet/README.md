@@ -10,15 +10,14 @@ Find out more
 
 ### Available Operations
 
-* [updatePet](#updatepet) - Update an existing pet
-* [addPet](#addpet) - Add a new pet to the store
-* [findPetsByStatus](#findpetsbystatus) - Finds Pets by status
-* [findPetsByTags](#findpetsbytags) - Finds Pets by tags
-* [getPetById](#getpetbyid) - Find pet by ID
-* [deletePet](#deletepet) - Deletes a pet
+* [update](#update) - Update an existing pet
+* [findByStatus](#findbystatus) - Finds Pets by status
+* [findByTags](#findbytags) - Finds Pets by tags
+* [getById](#getbyid) - Find pet by ID
+* [delete](#delete) - Deletes a pet
 * [uploadFile](#uploadfile) - uploads an image
 
-## updatePet
+## update
 
 Update an existing pet by Id
 
@@ -32,7 +31,7 @@ const petstore = new Petstore({
 });
 
 async function run() {
-  const result = await petstore.pet.updatePet({
+  const result = await petstore.pet.update({
     id: 10,
     name: "doggie",
     category: {
@@ -58,7 +57,7 @@ The standalone function version of this method:
 
 ```typescript
 import { PetstoreCore } from "petstore/core.js";
-import { petUpdatePet } from "petstore/funcs/petUpdatePet.js";
+import { petUpdate } from "petstore/funcs/petUpdate.js";
 
 // Use `PetstoreCore` for best tree-shaking performance.
 // You can create one instance of it to use across an application.
@@ -67,7 +66,7 @@ const petstore = new PetstoreCore({
 });
 
 async function run() {
-  const res = await petUpdatePet(petstore, {
+  const res = await petUpdate(petstore, {
     id: 10,
     name: "doggie",
     category: {
@@ -116,100 +115,7 @@ run();
 | errors.SDKError             | 4xx-5xx                     | */*                         |
 
 
-## addPet
-
-Add a new pet to the store
-
-### Example Usage
-
-```typescript
-import { Petstore } from "petstore";
-
-const petstore = new Petstore({
-  apiKey: process.env["PETSTORE_API_KEY"] ?? "",
-});
-
-async function run() {
-  const result = await petstore.pet.addPet({
-    id: 10,
-    name: "doggie",
-    category: {
-      id: 1,
-      name: "Dogs",
-    },
-    photoUrls: [
-      "<value>",
-    ],
-  });
-  
-  // Handle the result
-  console.log(result)
-}
-
-run();
-```
-
-### Standalone function
-
-The standalone function version of this method:
-
-```typescript
-import { PetstoreCore } from "petstore/core.js";
-import { petAddPet } from "petstore/funcs/petAddPet.js";
-
-// Use `PetstoreCore` for best tree-shaking performance.
-// You can create one instance of it to use across an application.
-const petstore = new PetstoreCore({
-  apiKey: process.env["PETSTORE_API_KEY"] ?? "",
-});
-
-async function run() {
-  const res = await petAddPet(petstore, {
-    id: 10,
-    name: "doggie",
-    category: {
-      id: 1,
-      name: "Dogs",
-    },
-    photoUrls: [
-      "<value>",
-    ],
-  });
-
-  if (!res.ok) {
-    throw res.error;
-  }
-
-  const { value: result } = res;
-
-  // Handle the result
-  console.log(result)
-}
-
-run();
-```
-
-### Parameters
-
-| Parameter                                                                                                                                                                      | Type                                                                                                                                                                           | Required                                                                                                                                                                       | Description                                                                                                                                                                    |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `request`                                                                                                                                                                      | [components.Pet](../../models/components/pet.md)                                                                                                                               | :heavy_check_mark:                                                                                                                                                             | The request object to use for the request.                                                                                                                                     |
-| `options`                                                                                                                                                                      | RequestOptions                                                                                                                                                                 | :heavy_minus_sign:                                                                                                                                                             | Used to set various options for making HTTP requests.                                                                                                                          |
-| `options.fetchOptions`                                                                                                                                                         | [RequestInit](https://developer.mozilla.org/en-US/docs/Web/API/Request/Request#options)                                                                                        | :heavy_minus_sign:                                                                                                                                                             | Options that are passed to the underlying HTTP request. This can be used to inject extra headers for examples. All `Request` options, except `method` and `body`, are allowed. |
-| `options.retries`                                                                                                                                                              | [RetryConfig](../../lib/utils/retryconfig.md)                                                                                                                                  | :heavy_minus_sign:                                                                                                                                                             | Enables retrying HTTP requests under certain failure conditions.                                                                                                               |
-
-### Response
-
-**Promise\<[components.Pet](../../models/components/pet.md)\>**
-
-### Errors
-
-| Error Object    | Status Code     | Content Type    |
-| --------------- | --------------- | --------------- |
-| errors.SDKError | 4xx-5xx         | */*             |
-
-
-## findPetsByStatus
+## findByStatus
 
 Multiple status values can be provided with comma separated strings
 
@@ -223,7 +129,7 @@ const petstore = new Petstore({
 });
 
 async function run() {
-  const result = await petstore.pet.findPetsByStatus({});
+  const result = await petstore.pet.findByStatus({});
   
   // Handle the result
   console.log(result)
@@ -238,7 +144,7 @@ The standalone function version of this method:
 
 ```typescript
 import { PetstoreCore } from "petstore/core.js";
-import { petFindPetsByStatus } from "petstore/funcs/petFindPetsByStatus.js";
+import { petFindByStatus } from "petstore/funcs/petFindByStatus.js";
 
 // Use `PetstoreCore` for best tree-shaking performance.
 // You can create one instance of it to use across an application.
@@ -247,7 +153,7 @@ const petstore = new PetstoreCore({
 });
 
 async function run() {
-  const res = await petFindPetsByStatus(petstore, {});
+  const res = await petFindByStatus(petstore, {});
 
   if (!res.ok) {
     throw res.error;
@@ -285,7 +191,7 @@ run();
 | errors.SDKError             | 4xx-5xx                     | */*                         |
 
 
-## findPetsByTags
+## findByTags
 
 Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.
 
@@ -299,7 +205,7 @@ const petstore = new Petstore({
 });
 
 async function run() {
-  const result = await petstore.pet.findPetsByTags({});
+  const result = await petstore.pet.findByTags({});
   
   // Handle the result
   console.log(result)
@@ -314,7 +220,7 @@ The standalone function version of this method:
 
 ```typescript
 import { PetstoreCore } from "petstore/core.js";
-import { petFindPetsByTags } from "petstore/funcs/petFindPetsByTags.js";
+import { petFindByTags } from "petstore/funcs/petFindByTags.js";
 
 // Use `PetstoreCore` for best tree-shaking performance.
 // You can create one instance of it to use across an application.
@@ -323,7 +229,7 @@ const petstore = new PetstoreCore({
 });
 
 async function run() {
-  const res = await petFindPetsByTags(petstore, {});
+  const res = await petFindByTags(petstore, {});
 
   if (!res.ok) {
     throw res.error;
@@ -361,7 +267,7 @@ run();
 | errors.SDKError             | 4xx-5xx                     | */*                         |
 
 
-## getPetById
+## getById
 
 Returns a single pet
 
@@ -375,7 +281,7 @@ const petstore = new Petstore({
 });
 
 async function run() {
-  const result = await petstore.pet.getPetById({
+  const result = await petstore.pet.getById({
     petId: 504151,
   });
   
@@ -392,7 +298,7 @@ The standalone function version of this method:
 
 ```typescript
 import { PetstoreCore } from "petstore/core.js";
-import { petGetPetById } from "petstore/funcs/petGetPetById.js";
+import { petGetById } from "petstore/funcs/petGetById.js";
 
 // Use `PetstoreCore` for best tree-shaking performance.
 // You can create one instance of it to use across an application.
@@ -401,7 +307,7 @@ const petstore = new PetstoreCore({
 });
 
 async function run() {
-  const res = await petGetPetById(petstore, {
+  const res = await petGetById(petstore, {
     petId: 504151,
   });
 
@@ -441,7 +347,7 @@ run();
 | errors.SDKError             | 4xx-5xx                     | */*                         |
 
 
-## deletePet
+## delete
 
 Deletes a pet
 
@@ -455,7 +361,7 @@ const petstore = new Petstore({
 });
 
 async function run() {
-  const result = await petstore.pet.deletePet({
+  const result = await petstore.pet.delete({
     petId: 441876,
   });
   
@@ -472,7 +378,7 @@ The standalone function version of this method:
 
 ```typescript
 import { PetstoreCore } from "petstore/core.js";
-import { petDeletePet } from "petstore/funcs/petDeletePet.js";
+import { petDelete } from "petstore/funcs/petDelete.js";
 
 // Use `PetstoreCore` for best tree-shaking performance.
 // You can create one instance of it to use across an application.
@@ -481,7 +387,7 @@ const petstore = new PetstoreCore({
 });
 
 async function run() {
-  const res = await petDeletePet(petstore, {
+  const res = await petDelete(petstore, {
     petId: 441876,
   });
 

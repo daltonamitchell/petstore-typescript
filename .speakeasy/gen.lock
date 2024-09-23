@@ -1,12 +1,13 @@
 lockVersion: 2.0.0
 id: f8dc9e06-a618-4d02-bd50-b428f6c7065d
 management:
-  docChecksum: 03e3387365ae18c7ce07d32543a62956
+  docChecksum: e0dd08a647742f937ac7d67514d6b508
   docVersion: 1.0.0
   speakeasyVersion: 1.402.0
   generationVersion: 2.422.6
-  releaseVersion: 0.0.2
-  configChecksum: 70650ea6c90293d1c8ed419650c15707
+  releaseVersion: 0.1.0
+  configChecksum: e8c6ec57676f4945fd4fb61d2a680a0a
+  published: true
 features:
   typescript:
     additionalDependencies: 0.1.0
@@ -20,6 +21,8 @@ features:
     globalSecurityCallbacks: 0.1.0
     globalSecurityFlattening: 0.1.0
     globalServerURLs: 2.82.4
+    groups: 2.81.2
+    nameOverrides: 2.81.2
     responseFormat: 0.2.3
     retries: 2.83.0
     sdkHooks: 0.1.0
@@ -62,30 +65,32 @@ generatedFiles:
   - docs/models/operations/updateuserrequest.md
   - docs/models/operations/uploadfilerequest.md
   - docs/sdks/pet/README.md
+  - docs/sdks/pets/README.md
   - docs/sdks/petstore/README.md
   - docs/sdks/store/README.md
   - docs/sdks/user/README.md
+  - docs/sdks/users/README.md
   - jsr.json
   - package.json
   - src/core.ts
-  - src/funcs/petAddPet.ts
-  - src/funcs/petDeletePet.ts
-  - src/funcs/petFindPetsByStatus.ts
-  - src/funcs/petFindPetsByTags.ts
-  - src/funcs/petGetPetById.ts
-  - src/funcs/petUpdatePet.ts
+  - src/funcs/petDelete.ts
+  - src/funcs/petFindByStatus.ts
+  - src/funcs/petFindByTags.ts
+  - src/funcs/petGetById.ts
+  - src/funcs/petUpdate.ts
   - src/funcs/petUploadFile.ts
+  - src/funcs/petsAdd.ts
   - src/funcs/storeDeleteOrder.ts
   - src/funcs/storeGetInventory.ts
   - src/funcs/storeGetOrderById.ts
   - src/funcs/storePlaceOrder.ts
-  - src/funcs/userCreateUser.ts
-  - src/funcs/userCreateUsersWithListInput.ts
-  - src/funcs/userDeleteUser.ts
-  - src/funcs/userGetUserByName.ts
-  - src/funcs/userLoginUser.ts
-  - src/funcs/userLogoutUser.ts
-  - src/funcs/userUpdateUser.ts
+  - src/funcs/userCreate.ts
+  - src/funcs/userCreateWithList.ts
+  - src/funcs/userDelete.ts
+  - src/funcs/userGet.ts
+  - src/funcs/userLogout.ts
+  - src/funcs/usersLogin.ts
+  - src/funcs/usersUpdate.ts
   - src/hooks/hooks.ts
   - src/hooks/index.ts
   - src/hooks/types.ts
@@ -135,9 +140,11 @@ generatedFiles:
   - src/models/operations/uploadfile.ts
   - src/sdk/index.ts
   - src/sdk/pet.ts
+  - src/sdk/pets.ts
   - src/sdk/sdk.ts
   - src/sdk/store.ts
   - src/sdk/user.ts
+  - src/sdk/users.ts
   - src/types/blobs.ts
   - src/types/constdatetime.ts
   - src/types/enums.ts

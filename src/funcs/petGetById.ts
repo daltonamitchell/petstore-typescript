@@ -24,11 +24,14 @@ import * as operations from "../models/operations/index.js";
 import { Result } from "../types/fp.js";
 
 /**
- * Deletes a pet
+ * Find pet by ID
+ *
+ * @remarks
+ * Returns a single pet
  */
-export async function petDeletePet(
+export async function petGetById(
   client: PetstoreCore,
-  request: operations.DeletePetRequest,
+  request: operations.GetPetByIdRequest,
   options?: RequestOptions,
 ): Promise<
   Result<
@@ -49,7 +52,7 @@ export async function petDeletePet(
 
   const parsed = safeParse(
     input,
-    (value) => operations.DeletePetRequest$outboundSchema.parse(value),
+    (value) => operations.GetPetByIdRequest$outboundSchema.parse(value),
     "Input validation failed",
   );
   if (!parsed.ok) {
@@ -69,16 +72,12 @@ export async function petDeletePet(
 
   const headers = new Headers({
     Accept: "application/json",
-    "api_key": encodeSimple("api_key", payload.api_key, {
-      explode: false,
-      charEncoding: "none",
-    }),
   });
 
   const secConfig = await extractSecurity(client._options.apiKey);
   const securityInput = secConfig == null ? {} : { apiKey: secConfig };
   const context = {
-    operationID: "deletePet",
+    operationID: "getPetById",
     oAuth2Scopes: [],
     securitySource: client._options.apiKey,
   };
@@ -86,7 +85,7 @@ export async function petDeletePet(
 
   const requestRes = client._createRequest(context, {
     security: requestSecurity,
-    method: "DELETE",
+    method: "GET",
     path: path,
     headers: headers,
     body: body,
