@@ -1,0 +1,12 @@
+workflowVersion: 1.0.0
+speakeasyVersion: latest
+sources:
+    petstore-oas:
+        inputs:
+            - location: openapi.yaml
+        registry:
+            location: registry.speakeasyapi.dev/coffeecup/coffeecup/petstore-oas
+targets:
+    petstore:
+        target: typescript
+        source: petstore-oas
